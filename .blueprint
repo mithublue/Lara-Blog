@@ -1,2 +1,33 @@
+created:
+    - database/factories/PostFactory.php
+    - database/factories/CategoryFactory.php
+    - database/factories/TagFactory.php
+    - database/factories/CommentFactory.php
+    - database/factories/AttachmentFactory.php
+    - database/factories/LikeFactory.php
+    - database/factories/PostViewFactory.php
+    - database/migrations/2024_09_09_052129_create_posts_table.php
+    - database/migrations/2024_09_09_052130_create_categories_table.php
+    - database/migrations/2024_09_09_052131_create_tags_table.php
+    - database/migrations/2024_09_09_052132_create_comments_table.php
+    - database/migrations/2024_09_09_052133_create_attachments_table.php
+    - database/migrations/2024_09_09_052134_create_likes_table.php
+    - database/migrations/2024_09_09_052135_create_post_views_table.php
+    - database/migrations/2024_09_09_052136_create_category_post_table.php
+    - database/migrations/2024_09_09_052137_create_post_tag_table.php
+    - app/Models/Post.php
+    - app/Models/Category.php
+    - app/Models/Tag.php
+    - app/Models/Comment.php
+    - app/Models/Attachment.php
+    - app/Models/Like.php
+    - app/Models/PostView.php
 models:
-    User: { name: string, email: string, email_verified_at: 'timestamp nullable', password: string, remember_token: 'string:100 nullable' }
+    Attachment: { post_id: 'foreign:posts', file_name: string, file_path: string, file_type: string, timestamps: timestamps, relationships: { belongsTo: Post } }
+    Like: { post_id: 'foreign:posts', user_id: 'foreign:users', timestamps: timestamps, relationships: { belongsTo: 'Post, User' } }
+    PostView: { post_id: 'foreign:posts', views_count: 'bigInteger default:0', timestamps: timestamps, relationships: { belongsTo: Post } }
+    User: { name: string, email: 'string unique', email_verified_at: 'nullable timestamp', password: string, remember_token: 'nullable string:100', timestamps: timestamps }
+    Post: { user_id: 'foreign:users', title: string, slug: 'string unique', body: text, status: 'enum:"draft,published,archived" default:''draft''', published_at: 'nullable timestamp', timestamps: timestamps, relationships: { hasMany: 'Comment, Attachment', belongsToMany: 'Category, Tag' } }
+    Category: { name: string, slug: 'string unique', description: 'nullable text', timestamps: timestamps, relationships: { belongsToMany: Post } }
+    Tag: { name: string, slug: 'string unique', timestamps: timestamps, relationships: { belongsToMany: Post } }
+    Comment: { post_id: 'foreign:posts', user_id: 'foreign:users', body: text, parent_id: 'nullable foreign:comments', timestamps: timestamps, relationships: { belongsTo: 'Post, User' } }

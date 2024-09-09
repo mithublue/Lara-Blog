@@ -1,0 +1,84 @@
+models:
+  Post:
+    user_id: foreign:users
+    title: string
+    slug: string unique
+    body: text
+    status: enum:"draft,published,archived" default:'draft'
+    published_at: nullable timestamp
+    timestamps: true
+    relationships:
+      hasMany: Comment, Attachment
+      belongsToMany: Category, Tag
+
+  Category:
+    name: string
+    slug: string unique
+    description: nullable text
+    timestamps: true
+    relationships:
+      belongsToMany: Post
+
+  Tag:
+    name: string
+    slug: string unique
+    timestamps: true
+    relationships:
+      belongsToMany: Post
+
+  Comment:
+    post_id: foreign:posts
+    user_id: foreign:users
+    body: text
+    parent_id: nullable foreign:comments
+    timestamps: true
+    relationships:
+      belongsTo: Post, User
+
+  Attachment:
+    post_id: foreign:posts
+    file_name: string
+    file_path: string
+    file_type: string
+    timestamps: true
+    relationships:
+      belongsTo: Post
+
+  Like:
+    post_id: foreign:posts
+    user_id: foreign:users
+    timestamps: true
+    relationships:
+      belongsTo: Post, User
+
+  PostView:
+    post_id: foreign:posts
+    views_count: bigInteger default:0
+    timestamps: true
+    relationships:
+      belongsTo: Post
+
+relationships:
+  Post:
+    belongsTo: User
+    hasMany: Comment, Attachment
+    belongsToMany: Category, Tag
+
+  Category:
+    belongsToMany: Post
+
+  Tag:
+    belongsToMany: Post
+
+  Comment:
+    belongsTo: Post, User
+    hasMany: Comment
+
+  Attachment:
+    belongsTo: Post
+
+  Like:
+    belongsTo: Post, User
+
+  PostView:
+    belongsTo: Post
